@@ -17,9 +17,9 @@ char *my_itoa (int num, char *str, int radix);
 char *my_fgets (char *str, int num, FILE *stream);
 
 
-/*!
-@brief Hello! This is my own library of functions!
-*/
+
+/// @brief Hello! This is my own library of functions!
+
 
 
 int main()
@@ -47,7 +47,6 @@ the maximal amount of chars in the string.
 char *my_fgets (char *str, int num, FILE *stream)
     {
         assert (str);
-        assert (isfinite(num));
         assert (stream);
 
         int counter = 0;
@@ -135,8 +134,6 @@ int my_atoi (char *str)
     {
         assert (str);
 
-        char *nstr = str;
-
         while (*str == ' ')
             str++;
 
@@ -147,17 +144,13 @@ int my_atoi (char *str)
             str++;
 
         int number = 0;
-        while (*str)
+        if (*str < '0' || *str > '9') return 0;
+        while (*str >= '0' && *str <= '9')
         {
-            if (*str >= '0' && *str <= '9')
                 number = number * 10 + *str - '0';
-            else
-                if (!number)
-                    return 0;
-                else return number * sign;
-
-            str++;
+                str++;
         }
+
         return number * sign;
     }
 
@@ -177,26 +170,31 @@ The number is in the number system based on radix.
 
 char *my_itoa (int num, char *str, int radix)
     {
-        assert (isfinite(num));
         assert (str);
-        assert (radix);
+        assert (radix > 0);
 
-        char *str1 = str;
-        char str2[17] = {};
+        char *str_new = str;
+        char str_temp[17] = {};
         int counter = 0;
+        int sign = (num < 0)? -1 : 1;
+        if (num < 0) num *= (-1);
+
         while (num)
         {
             int rest = num % radix;
-            str2[counter] = rest + ((rest < 10) ? '0' : 'A' - 10);
+            *(str_temp + counter) = rest + ((rest < 10) ? '0' : 'A' - 10);
             num /= radix;
             counter ++;
         }
 
+        if (sign < 0) *str++ = '-';
+
         while (counter)
         {
             counter--;
-            *str = str2[counter];
+            *str = str_temp[counter];
             str++;
         }
-        return str1;
+        return str_new;
     }
+
